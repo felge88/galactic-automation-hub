@@ -106,9 +106,18 @@ sed -i 's/"react-day-picker": "8\.10\.1"/"react-day-picker": "^8.10.1"/' package
 rm -rf node_modules package-lock.json
 npm install --legacy-peer-deps
 
-# Fix Backend Dependencies
+# Fix Backend Dependencies and add missing packages
 log "Fixing backend dependencies..."
 cd backend
+
+# Add multer dependencies if missing
+if ! grep -q '"multer"' package.json; then
+    sed -i '/"zod": "\^3\.24\.1"/i\    "multer": "^1.4.5",' package.json
+fi
+if ! grep -q '"@types/multer"' package.json; then
+    sed -i '/"@types/node": "\^24\.0\.15"/i\    "@types/multer": "^1.4.7",' package.json
+fi
+
 rm -rf node_modules package-lock.json
 npm install
 cd ..

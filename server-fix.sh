@@ -77,9 +77,13 @@ cd "$PROJECT_DIR"
 log "✅ Backend Dependencies repariert"
 
 # =============================================================================
-# 4. FIX DOCKERFILES
+# 4. FIX DEPENDENCIES AND DOCKERFILES
 # =============================================================================
-log "🐳 Dockerfiles aktualisieren..."
+log "📦 Dependencies und Dockerfiles aktualisieren..."
+
+# Fix package.json dependencies
+log "🔧 Fixing package.json dependencies..."
+sed -i 's/"date-fns": "4\.1\.0"/"date-fns": "^3.6.0"/' package.json
 
 # Update Frontend Dockerfile
 cat > Dockerfile.frontend << 'EOF'

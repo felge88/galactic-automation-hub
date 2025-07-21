@@ -20,6 +20,7 @@ export const getCurrentUser = async (req: AuthRequest, res: Response) => {
         username: true,
         email: true, 
         name: true, 
+        language: true,
         role: true, 
         rank: true, 
         image: true,
@@ -46,6 +47,7 @@ export const getUsers = async (_req: Request, res: Response) => {
         username: true,
         email: true, 
         name: true, 
+        language: true,
         role: true, 
         rank: true, 
         createdAt: true, 
@@ -63,13 +65,14 @@ const createUserSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   name: z.string().min(2),
+  language: z.string().optional(),
   role: z.nativeEnum(Role).optional(),
   rank: z.nativeEnum(Rank).optional()
 });
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { username, email, password, name, role, rank } = createUserSchema.parse(req.body);
+    const { username, email, password, name, language, role, rank } = createUserSchema.parse(req.body);
     
     const existingUsername = await prisma.user.findUnique({ where: { username } });
     if (existingUsername) return res.status(409).json({ error: 'Username bereits vergeben' });
@@ -79,13 +82,14 @@ export const createUser = async (req: Request, res: Response) => {
     
     const hash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({ 
-      data: { username, email, password: hash, name, role, rank } 
+      data: { username, email, password: hash, name, language, role, rank } 
     });
     res.status(201).json({ 
       id: user.id, 
       username: user.username,
       email: user.email, 
       name: user.name, 
+      language: user.language,
       role: user.role, 
       rank: user.rank 
     });
@@ -100,6 +104,7 @@ const updateUserSchema = z.object({
   email: z.string().email().optional(),
   name: z.string().min(2).optional(),
   password: z.string().min(6).optional(),
+  language: z.string().optional(),
   role: z.nativeEnum(Role).optional(),
   rank: z.nativeEnum(Rank).optional()
 });
@@ -134,6 +139,7 @@ export const updateUser = async (req: Request, res: Response) => {
       username: user.username,
       email: user.email, 
       name: user.name, 
+      language: user.language,
       role: user.role, 
       rank: user.rank 
     });
