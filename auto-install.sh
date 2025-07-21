@@ -137,7 +137,46 @@ chown -R $CURRENT_USER:$CURRENT_USER "$PROJECT_DIR"
 log "✅ Projekt erfolgreich geklont"
 
 # =============================================================================
-# 5. SECURITY CONFIGURATION
+# 5. NODE.JS DEPENDENCIES FIX
+# =============================================================================
+log "📦 Node.js Dependencies reparieren..."
+
+# Fix Frontend dependencies
+log "🔧 Frontend Dependencies installieren..."
+if [ -f "package.json" ]; then
+    # Remove existing node_modules and lock file
+    rm -rf node_modules package-lock.json
+    
+    # Install with legacy peer deps to avoid conflicts
+    npm install --legacy-peer-deps || warn "Frontend npm install hatte Warnungen"
+    
+    log "✅ Frontend Dependencies installiert"
+else
+    warn "Frontend package.json nicht gefunden"
+fi
+
+# Fix Backend dependencies
+log "🔧 Backend Dependencies installieren..."
+cd backend
+if [ -f "package.json" ]; then
+    # Remove existing node_modules and lock file
+    rm -rf node_modules package-lock.json
+    
+    # Install backend dependencies
+    npm install || warn "Backend npm install hatte Warnungen"
+    
+    log "✅ Backend Dependencies installiert"
+else
+    warn "Backend package.json nicht gefunden"
+fi
+
+# Go back to project root
+cd "$PROJECT_DIR"
+
+log "✅ Node.js Dependencies repariert"
+
+# =============================================================================
+# 6. SECURITY CONFIGURATION
 # =============================================================================
 log "🔒 Sicherheitskonfiguration..."
 
@@ -160,7 +199,7 @@ chmod +x nginx-setup.sh 2>/dev/null || true
 log "✅ Sicherheitskonfiguration abgeschlossen"
 
 # =============================================================================
-# 6. APPLICATION DEPLOYMENT
+# 7. APPLICATION DEPLOYMENT
 # =============================================================================
 log "🚀 Anwendung wird deployed..."
 
@@ -169,7 +208,7 @@ docker compose down 2>/dev/null || true
 
 # Build and start application
 log "🔨 Container werden gebaut und gestartet..."
-docker compose up --build -d
+COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose up --build -d
 
 # Wait for services to be ready
 log "⏳ Warte auf Service-Start..."
@@ -178,7 +217,7 @@ sleep 30
 log "✅ Deployment abgeschlossen"
 
 # =============================================================================
-# 7. HEALTH CHECK
+# 8. HEALTH CHECK
 # =============================================================================
 log "🩺 System-Health-Check..."
 
@@ -189,16 +228,24 @@ else
     error "❌ Container-Start fehlgeschlagen"
 fi
 
-# Check backend health
-sleep 10
-if curl -s http://localhost:4000/api/health > /dev/null; then
-    log "✅ Backend-Health-Check erfolgreich"
-else
-    warn "⚠️  Backend-Health-Check fehlgeschlagen (möglicherweise noch nicht bereit)"
-fi
+# Check backend health (with retries)
+log "⏳ Backend Health-Check (kann bis zu 2 Minuten dauern)..."
+for i in {1..12}; do
+    sleep 10
+    if curl -s http://localhost:4000/api/health > /dev/null 2>&1; then
+        log "✅ Backend-Health-Check erfolgreich"
+        break
+    else
+        if [ $i -eq 12 ]; then
+            warn "⚠️  Backend-Health-Check fehlgeschlagen (Services starten möglicherweise noch)"
+        else
+            echo -n "."
+        fi
+    fi
+done
 
 # =============================================================================
-# 8. SYSTEM SERVICE SETUP (Auto-Start)
+# 9. SYSTEM SERVICE SETUP (Auto-Start)
 # =============================================================================
 log "🔄 Auto-Start Service einrichten..."
 
@@ -227,7 +274,7 @@ systemctl enable galactic-automation.service
 log "✅ Auto-Start Service eingerichtet"
 
 # =============================================================================
-# 9. NGINX SETUP (OPTIONAL)
+# 10. NGINX SETUP (OPTIONAL)
 # =============================================================================
 read -p "🌐 Möchten Sie Nginx Reverse Proxy installieren? (y/N): " -n 1 -r
 echo
@@ -291,7 +338,7 @@ EOF
 fi
 
 # =============================================================================
-# 10. COMPLETION SUMMARY
+# 11. COMPLETION SUMMARY
 # =============================================================================
 echo ""
 echo "🎉 Installation erfolgreich abgeschlossen!"
@@ -342,10 +389,10 @@ echo ""
 log "🔍 Finale System-Überprüfung..."
 sleep 5
 
-if curl -s http://localhost:4000/api/health | grep -q "ok"; then
+if curl -s http://localhost:4000/api/health | grep -q "ok" 2>/dev/null; then
     echo -e "${GREEN}✅ System läuft perfekt!${NC}"
 else
-    echo -e "${YELLOW}⚠️  System startet noch, bitte warten Sie 1-2 Minuten${NC}"
+    echo -e "${YELLOW}⚠️  System startet noch, bitte warten Sie 1-2 Minuten und prüfen Sie: http://$SERVER_IP:3000${NC}"
 fi
 
 echo ""
