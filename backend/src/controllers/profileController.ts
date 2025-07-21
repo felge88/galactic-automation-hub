@@ -17,7 +17,8 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
   try {
     const data = profileSchema.parse(req.body);
     const user = await prisma.user.update({ where: { id: req.user!.userId }, data });
-    res.json({ id: user.id, email: user.email, name: user.name, image: user.image, language: user.language });
+    const language = (user as any).language ?? "en";
+    res.json({ id: user.id, email: user.email, name: user.name, image: user.image, language });
   } catch (err: any) {
     if (err instanceof z.ZodError) return res.status(400).json({ error: err.errors });
     res.status(500).json({ error: 'Serverfehler' });
