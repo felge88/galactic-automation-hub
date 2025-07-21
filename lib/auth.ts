@@ -2,6 +2,7 @@ import { apiClient } from '@/lib/api/client';
 
 export interface User {
   id: number;
+  username: string;
   email: string;
   name: string;
   role: 'USER' | 'ADMIN' | 'ADMIRAL';
@@ -40,7 +41,7 @@ export async function getCurrentUser(): Promise<User | null> {
 }
 
 export async function login(
-  email: string,
+  username: string,
   password: string,
 ): Promise<{
   success: boolean;
@@ -49,7 +50,7 @@ export async function login(
 }> {
   try {
     const response = await apiClient.post<LoginResponse>('/api/login', {
-      email,
+      username,
       password,
     });
 
@@ -83,6 +84,7 @@ export async function login(
 }
 
 export async function register(
+  username: string,
   email: string,
   password: string,
   name: string,
@@ -93,6 +95,7 @@ export async function register(
 }> {
   try {
     const response = await apiClient.post('/api/register', {
+      username,
       email,
       password,
       name,

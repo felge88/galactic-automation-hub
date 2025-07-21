@@ -29,8 +29,9 @@ docker compose logs -f
 
 ## Demo-Zugangsdaten
 
-- **Admin**: admin@example.com / admin123
-- **User**: user@example.com / user123
+- **Admin**: admin / admin123 (ADMIN-Rolle)
+- **User**: testuser / user123 (USER-Rolle) 
+- **Commander**: commander / commander123 (ADMIRAL-Rolle)
 
 ## Sicherheits-Hinweise für Production
 

@@ -20,8 +20,9 @@ Das war's! Die Anwendung ist unter folgenden URLs verfügbar:
 
 ## 📋 Demo-Zugangsdaten
 
-- **Admin**: admin@example.com / admin123
-- **User**: user@example.com / user123
+- **Admin**: admin / admin123 (ADMIN-Rolle)
+- **User**: testuser / user123 (USER-Rolle)
+- **Commander**: commander / commander123 (ADMIRAL-Rolle)
 
 ## 🏗️ Projektstruktur
 
@@ -60,7 +61,7 @@ Das war's! Die Anwendung ist unter folgenden URLs verfügbar:
 - **TypeScript** - Type-sichere Entwicklung
 - **Prisma ORM** - Type-safe Datenbankzugriff
 - **PostgreSQL** - Relationale Datenbank
-- **JWT** - Authentifizierung
+- **JWT** - Authentifizierung (24h Token-Gültigkeit)
 - **bcryptjs** - Passwort-Hashing
 - **Socket.io** - Echzeit-Kommunikation
 
@@ -132,8 +133,8 @@ BACKEND_URL=http://backend:4000
 ## 📊 API-Dokumentation
 
 ### Authentifizierung
-- `POST /api/login` - Benutzer-Login
-- `POST /api/register` - Benutzer-Registrierung
+- `POST /api/login` - Benutzer-Login (username/password)
+- `POST /api/register` - Benutzer-Registrierung (username/email/password/name)
 - `GET /api/user/me` - Aktueller Benutzer (Auth erforderlich)
 
 ### Benutzer-Management (Admin)
@@ -174,9 +175,10 @@ Alle geschützten Routen erfordern einen `Authorization: Bearer <token>` Header.
 - **CORS** - Konfiguriert für Frontend-Domain
 - **Helmet** - Sicherheits-Headers
 - **Rate Limiting** - Schutz vor Brute-Force
-- **JWT** - Sichere Authentifizierung
+- **JWT** - Sichere Authentifizierung (24h Gültigkeit)
 - **bcrypt** - Passwort-Hashing mit Salt
 - **Input-Validierung** - Zod-Schema-Validierung
+- **Unique Constraints** - Username und Email müssen eindeutig sein
 
 ## 📈 Production-Deployment
 
@@ -265,6 +267,12 @@ docker compose up --build -d
 ```
 
 ## 📝 Changelog
+
+### v1.1.0
+- **Username-basiertes Login** statt Email
+- **Erweiterte Demo-User** (Admin, User, Commander)
+- **Verbesserte Authentifizierung** mit 24h Token-Gültigkeit
+- **Unique Constraints** für Username und Email
 
 ### v1.0.0
 - Vollständige Docker-Integration

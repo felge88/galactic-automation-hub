@@ -17,6 +17,7 @@ export const getCurrentUser = async (req: AuthRequest, res: Response) => {
       where: { id: userId },
       select: { 
         id: true, 
+        username: true,
         email: true, 
         name: true, 
         role: true, 
@@ -39,7 +40,18 @@ export const getCurrentUser = async (req: AuthRequest, res: Response) => {
 
 export const getUsers = async (_req: Request, res: Response) => {
   try {
-    const users = await prisma.user.findMany({ select: { id: true, email: true, name: true, role: true, rank: true, createdAt: true, updatedAt: true } });
+    const users = await prisma.user.findMany({ 
+      select: { 
+        id: true, 
+        username: true,
+        email: true, 
+        name: true, 
+        role: true, 
+        rank: true, 
+        createdAt: true, 
+        updatedAt: true 
+      } 
+    });
     res.json(users);
   } catch {
     res.status(500).json({ error: 'Serverfehler' });
@@ -47,6 +59,7 @@ export const getUsers = async (_req: Request, res: Response) => {
 };
 
 const createUserSchema = z.object({
+  username: z.string().min(3),
   email: z.string().email(),
   password: z.string().min(6),
   name: z.string().min(2),
@@ -56,12 +69,26 @@ const createUserSchema = z.object({
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { email, password, name, role, rank } = createUserSchema.parse(req.body);
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) return res.status(409).json({ error: 'E-Mail bereits registriert' });
+    const { username, email, password, name, role, rank } = createUserSchema.parse(req.body);
+    
+    const existingUsername = await prisma.user.findUnique({ where: { username } });
+    if (existingUsername) return res.status(409).json({ error: 'Username bereits vergeben' });
+    
+    const existingEmail = await prisma.user.findUnique({ where: { email } });
+    if (existingEmail) return res.status(409).json({ error: 'E-Mail bereits registriert' });
+    
     const hash = await bcrypt.hash(password, 10);
-    const user = await prisma.user.create({ data: { email, password: hash, name, role, rank } });
-    res.status(201).json({ id: user.id, email: user.email, name: user.name, role: user.role, rank: user.rank });
+    const user = await prisma.user.create({ 
+      data: { username, email, password: hash, name, role, rank } 
+    });
+    res.status(201).json({ 
+      id: user.id, 
+      username: user.username,
+      email: user.email, 
+      name: user.name, 
+      role: user.role, 
+      rank: user.rank 
+    });
   } catch (err: any) {
     if (err instanceof z.ZodError) return res.status(400).json({ error: err.errors });
     res.status(500).json({ error: 'Serverfehler' });
@@ -69,6 +96,7 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 const updateUserSchema = z.object({
+  username: z.string().min(3).optional(),
   email: z.string().email().optional(),
   name: z.string().min(2).optional(),
   password: z.string().min(6).optional(),
@@ -80,11 +108,35 @@ export const updateUser = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
     const data = updateUserSchema.parse(req.body);
+    
+    // Check for conflicts if username or email is being updated
+    if (data.username) {
+      const existingUsername = await prisma.user.findFirst({ 
+        where: { username: data.username, NOT: { id } } 
+      });
+      if (existingUsername) return res.status(409).json({ error: 'Username bereits vergeben' });
+    }
+    
+    if (data.email) {
+      const existingEmail = await prisma.user.findFirst({ 
+        where: { email: data.email, NOT: { id } } 
+      });
+      if (existingEmail) return res.status(409).json({ error: 'E-Mail bereits vergeben' });
+    }
+    
     if (data.password) {
       data.password = await bcrypt.hash(data.password, 10);
     }
+    
     const user = await prisma.user.update({ where: { id }, data });
-    res.json({ id: user.id, email: user.email, name: user.name, role: user.role, rank: user.rank });
+    res.json({ 
+      id: user.id, 
+      username: user.username,
+      email: user.email, 
+      name: user.name, 
+      role: user.role, 
+      rank: user.rank 
+    });
   } catch (err: any) {
     if (err instanceof z.ZodError) return res.status(400).json({ error: err.errors });
     res.status(500).json({ error: 'Serverfehler' });

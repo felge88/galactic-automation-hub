@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast"
 import { login } from "@/lib/auth"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -20,7 +20,7 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const result = await login(email, password)
+      const result = await login(username, password)
       if (result.success) {
         toast({
           title: "Zugang gewährt",
@@ -77,12 +77,12 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                   className="starwars-input"
-                  placeholder="E-Mail Adresse"
+                  placeholder="Offizier-Kennung"
                 />
               </div>
 
@@ -112,8 +112,9 @@ export default function LoginPage() {
             {/* Demo Credentials */}
             <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded">
               <p className="text-xs text-blue-300 mb-2">Demo-Zugangsdaten:</p>
-              <p className="text-xs text-white">Admin: admin@example.com / admin123</p>
-              <p className="text-xs text-white">User: user@example.com / user123</p>
+              <p className="text-xs text-white">Admin: admin / admin123</p>
+              <p className="text-xs text-white">User: testuser / user123</p>
+              <p className="text-xs text-white">Commander: commander / commander123</p>
             </div>
 
             {/* Status Panel */}

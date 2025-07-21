@@ -9,12 +9,13 @@ async function main() {
   // Admin User erstellen
   const adminPassword = await bcrypt.hash('admin123', 10);
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@example.com' },
+    where: { username: 'admin' },
     update: {},
     create: {
+      username: 'admin',
       email: 'admin@example.com',
       password: adminPassword,
-      name: 'Admin User',
+      name: 'Admiral Skywalker',
       role: 'ADMIN',
       rank: 'ELITE'
     }
@@ -23,20 +24,37 @@ async function main() {
   // Test User erstellen
   const userPassword = await bcrypt.hash('user123', 10);
   const user = await prisma.user.upsert({
-    where: { email: 'user@example.com' },
+    where: { username: 'testuser' },
     update: {},
     create: {
+      username: 'testuser',
       email: 'user@example.com',
       password: userPassword,
-      name: 'Test User',
+      name: 'Luke Skywalker',
       role: 'USER',
       rank: 'VIP'
     }
   });
 
+  // Commander User erstellen
+  const commanderPassword = await bcrypt.hash('commander123', 10);
+  const commander = await prisma.user.upsert({
+    where: { username: 'commander' },
+    update: {},
+    create: {
+      username: 'commander',
+      email: 'commander@example.com',
+      password: commanderPassword,
+      name: 'Commander Vader',
+      role: 'ADMIRAL',
+      rank: 'ELITE'
+    }
+  });
+
   console.log('✅ Database seeded successfully!');
-  console.log(`👤 Admin: ${admin.email} (password: admin123)`);
-  console.log(`👤 User: ${user.email} (password: user123)`);
+  console.log(`👤 Admin: ${admin.username} (password: admin123) - ${admin.role}`);
+  console.log(`👤 User: ${user.username} (password: user123) - ${user.role}`);
+  console.log(`👤 Commander: ${commander.username} (password: commander123) - ${commander.role}`);
 }
 
 main()
