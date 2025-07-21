@@ -1,37 +1,42 @@
-// Placeholder authentication functions
-// These will be implemented with real authentication logic
+import { apiClient } from '@/lib/api/client';
 
 export interface User {
-  id: string
-  username: string
-  email: string
-  name: string
-  isAdmin: boolean
-  permissions: {
-    instagram: boolean
-    youtube: boolean
-    statistics: boolean
-  }
-  lastLogin?: Date
-  createdAt: Date
+  id: number;
+  username: string;
+  email: string;
+  name: string;
+  role: 'USER' | 'ADMIN' | 'ADMIRAL';
+  rank: 'NONE' | 'VIP' | 'ELITE';
+  image?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface LoginResponse {
+  token: string;
+  user: User;
 }
 
 export async function getCurrentUser(): Promise<User | null> {
-  if (typeof window === "undefined") return null
+  if (typeof window === "undefined") return null;
 
-  const userStr = localStorage.getItem("currentUser")
-  if (!userStr) return null
+  const token = localStorage.getItem("auth_token");
+  if (!token) return null;
 
   try {
-    const parsed = JSON.parse(userStr)
+    // Validate token with backend and get current user
+    const response = await apiClient.get<User>('/api/user/me');
+    
+    if (response.error) {
+      // Token is invalid, remove it
+      localStorage.removeItem("auth_token");
+      return null;
+    }
 
-    // Strings → Date konvertieren
-    if (parsed.createdAt) parsed.createdAt = new Date(parsed.createdAt)
-    if (parsed.lastLogin) parsed.lastLogin = new Date(parsed.lastLogin)
-
-    return parsed as User
+    return response.data || null;
   } catch {
-    return null
+    localStorage.removeItem("auth_token");
+    return null;
   }
 }
 
@@ -39,92 +44,100 @@ export async function login(
   username: string,
   password: string,
 ): Promise<{
-  success: boolean
-  error?: string
-  user?: User
+  success: boolean;
+  error?: string;
+  user?: User;
 }> {
-  // Placeholder login logic
-  // In real implementation, this would validate against database
+  try {
+    const response = await apiClient.post<LoginResponse>('/api/login', {
+      username,
+      password,
+    });
 
-  const mockUsers: User[] = [
-    {
-      id: "1",
-      username: "admin",
-      email: "admin@galactic.hub",
-      name: "Admiral Skywalker",
-      isAdmin: true,
-      permissions: {
-        instagram: true,
-        youtube: true,
-        statistics: true,
-      },
-      lastLogin: new Date(),
-      createdAt: new Date("2024-01-01"),
-    },
-    {
-      id: "2",
-      username: "user1",
-      email: "user1@galactic.hub",
-      name: "Luke Skywalker",
-      isAdmin: false,
-      permissions: {
-        instagram: true,
-        youtube: false,
-        statistics: true,
-      },
-      lastLogin: new Date(),
-      createdAt: new Date("2024-01-15"),
-    },
-  ]
+    if (response.error) {
+      return {
+        success: false,
+        error: response.error,
+      };
+    }
 
-  const user = mockUsers.find((u) => u.username === username)
+    if (response.data) {
+      // Store token in localStorage
+      localStorage.setItem("auth_token", response.data.token);
+      
+      return {
+        success: true,
+        user: response.data.user,
+      };
+    }
 
-  if (!user || password !== "password123") {
     return {
       success: false,
-      error: "Ungültige Anmeldedaten",
+      error: 'Unexpected response format',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Login failed',
+    };
+  }
+}
+
+export async function register(
+  username: string,
+  email: string,
+  password: string,
+  name: string,
+): Promise<{
+  success: boolean;
+  error?: string;
+  user?: Partial<User>;
+}> {
+  try {
+    const response = await apiClient.post('/api/register', {
+      username,
+      email,
+      password,
+      name,
+    });
+
+    if (response.error) {
+      return {
+        success: false,
+        error: response.error,
+      };
     }
-  }
 
-  // Store user in localStorage (in real app, use secure session management)
-  if (typeof window !== "undefined") {
-    localStorage.setItem("currentUser", JSON.stringify(user))
-  }
-
-  return {
-    success: true,
-    user,
+    return {
+      success: true,
+      user: response.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Registration failed',
+    };
   }
 }
 
 export async function logout(): Promise<void> {
-  // Placeholder logout logic
   if (typeof window !== "undefined") {
-    localStorage.removeItem("currentUser")
+    localStorage.removeItem("auth_token");
+    // Optionally call backend logout endpoint
+    try {
+      await apiClient.post('/api/logout');
+    } catch {
+      // Ignore logout errors
+    }
   }
 }
 
-export async function updateUserPermissions(userId: string, permissions: any): Promise<void> {
-  // Placeholder - implement with real database update
-  console.log("Updating permissions for user:", userId, permissions)
+export function isAuthenticated(): boolean {
+  if (typeof window === "undefined") return false;
+  return !!localStorage.getItem("auth_token");
 }
 
-export async function createUser(userData: Partial<User>): Promise<User> {
-  // Placeholder - implement with real database insert
-  const newUser: User = {
-    id: Date.now().toString(),
-    username: userData.username || "",
-    email: userData.email || "",
-    name: userData.name || "",
-    isAdmin: userData.isAdmin || false,
-    permissions: userData.permissions || {
-      instagram: false,
-      youtube: false,
-      statistics: false,
-    },
-    createdAt: new Date(),
-  }
-
-  console.log("Creating new user:", newUser)
-  return newUser
+export function getAuthToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("auth_token");
 }

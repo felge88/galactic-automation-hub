@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { createContext, useContext, useEffect, useState } from "react"
 import type { User } from "@/types/user"
 import { getCurrentUser } from "@/lib/auth"
@@ -10,6 +9,8 @@ interface AuthContextType {
   user: User | null
   loading: boolean
   setUser: (user: User | null) => void
+  isAuthenticated: boolean
+  isAdmin: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -18,6 +19,9 @@ export { AuthContext }
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const isAuthenticated = !!user
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'ADMIRAL'
 
   useEffect(() => {
     const loadUser = async () => {
@@ -34,7 +38,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loadUser()
   }, [])
 
-  return <AuthContext.Provider value={{ user, loading, setUser }}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider 
+      value={{ 
+        user, 
+        loading, 
+        setUser, 
+        isAuthenticated, 
+        isAdmin 
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {

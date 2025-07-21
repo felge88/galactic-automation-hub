@@ -30,7 +30,7 @@ export default function LoginPage() {
       } else {
         toast({
           title: "Zugang verweigert",
-          description: "Ungültige Anmeldedaten. Versuchen Sie es erneut.",
+          description: result.error || "Ungültige Anmeldedaten. Versuchen Sie es erneut.",
           variant: "destructive",
         })
       }
@@ -108,6 +108,14 @@ export default function LoginPage() {
                 )}
               </Button>
             </form>
+
+            {/* Demo Credentials */}
+            <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded">
+              <p className="text-xs text-blue-300 mb-2">Demo-Zugangsdaten:</p>
+              <p className="text-xs text-white">Admin: admin / admin123</p>
+              <p className="text-xs text-white">User: testuser / user123</p>
+              <p className="text-xs text-white">Commander: commander / commander123</p>
+            </div>
 
             {/* Status Panel */}
             <div className="status-panel">
