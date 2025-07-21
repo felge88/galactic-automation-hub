@@ -138,9 +138,9 @@ export function AdminPanel() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="text-xs text-gray-400">
-                    <div>IG: {user.permissions.instagram ? "✓" : "✗"}</div>
-                    <div>YT: {user.permissions.youtube ? "✓" : "✗"}</div>
-                    <div>Stats: {user.permissions.statistics ? "✓" : "✗"}</div>
+                    <div>IG: {user.permissions?.instagram ? "✓" : "✗"}</div>
+                    <div>YT: {user.permissions?.youtube ? "✓" : "✗"}</div>
+                    <div>Stats: {user.permissions?.statistics ? "✓" : "✗"}</div>
                   </div>
                   <Button variant="ghost" size="sm" className="text-yellow-400">
                     Bearbeiten

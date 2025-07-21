@@ -37,6 +37,15 @@ export async function getCurrentUser(): Promise<User | null> {
     if (userData) {
       // Add computed isAdmin property
       (userData as any).isAdmin = userData.role === 'ADMIN' || userData.role === 'ADMIRAL';
+      
+      // Add default permissions if not present
+      if (!userData.permissions) {
+        (userData as any).permissions = {
+          instagram: userData.role === 'ADMIN' || userData.role === 'ADMIRAL',
+          youtube: userData.role === 'ADMIN' || userData.role === 'ADMIRAL',
+          statistics: true
+        };
+      }
     }
     return userData || null;
   } catch {

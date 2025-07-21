@@ -10,7 +10,7 @@ export default async function InstagramPage() {
   }
 
   // Check if user has Instagram module permission
-  if (!user.permissions.instagram) {
+  if (!user.permissions?.instagram && user.role !== 'ADMIN') {
     redirect("/modules")
   }
 

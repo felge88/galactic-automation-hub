@@ -251,20 +251,20 @@ export function EnhancedSettingsPanel({ user }: SettingsPanelProps) {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-300">Instagram Module</span>
-                    <Badge className={user.permissions.instagram ? "status-green" : "status-red"}>
-                      {user.permissions.instagram ? "Aktiviert" : "Deaktiviert"}
+                    <Badge className={user.permissions?.instagram ? "status-green" : "status-red"}>
+                      {user.permissions?.instagram ? "Aktiviert" : "Deaktiviert"}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-300">YouTube Module</span>
-                    <Badge className={user.permissions.youtube ? "status-green" : "status-red"}>
-                      {user.permissions.youtube ? "Aktiviert" : "Deaktiviert"}
+                    <Badge className={user.permissions?.youtube ? "status-green" : "status-red"}>
+                      {user.permissions?.youtube ? "Aktiviert" : "Deaktiviert"}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-300">Statistiken</span>
-                    <Badge className={user.permissions.statistics ? "status-green" : "status-red"}>
-                      {user.permissions.statistics ? "Aktiviert" : "Deaktiviert"}
+                    <Badge className={user.permissions?.statistics ? "status-green" : "status-red"}>
+                      {user.permissions?.statistics ? "Aktiviert" : "Deaktiviert"}
                     </Badge>
                   </div>
                   {user.isAdmin && (

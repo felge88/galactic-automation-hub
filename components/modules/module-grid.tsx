@@ -29,7 +29,7 @@ export function ModuleGrid({ user }: ModuleGridProps) {
       title: "YouTube Downloader",
       description: "Videos & Audio in allen Auflösungen speichern.",
       href: "/modules/youtube",
-      active: user.permissions.youtube,
+      active: user.permissions?.youtube || false,
       icon: Youtube,
     },
   ] as const
