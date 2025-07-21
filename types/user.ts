@@ -9,8 +9,10 @@ export interface User {
   role: Role;
   rank: Rank;
   image?: string;
+  language?: string;
   createdAt: Date;
   updatedAt: Date;
+  isAdmin?: boolean;
 }
 
 export interface AuthUser extends User {

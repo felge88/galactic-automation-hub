@@ -33,7 +33,12 @@ export async function getCurrentUser(): Promise<User | null> {
       return null;
     }
 
-    return response.data || null;
+    const userData = response.data;
+    if (userData) {
+      // Add computed isAdmin property
+      (userData as any).isAdmin = userData.role === 'ADMIN' || userData.role === 'ADMIRAL';
+    }
+    return userData || null;
   } catch {
     localStorage.removeItem("auth_token");
     return null;
