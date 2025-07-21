@@ -53,11 +53,15 @@ fi
 # Add multer to backend package.json
 cd backend
 
-# Add multer dependency
+# Add multer dependency with correct version
 if ! grep -q '"multer"' package.json; then
     # Add to dependencies
-    sed -i '/"zod": "\^3\.24\.1"/i\    "multer": "^1.4.5",' package.json
+    sed -i '/"zod": "\^3\.24\.1"/i\    "multer": "1.4.5-lts.1",' package.json
     success "✅ Added multer dependency"
+elif grep -q '"multer": "\^1\.4\.5"' package.json; then
+    # Fix existing incorrect version
+    sed -i 's/"multer": "\^1\.4\.5"/"multer": "1.4.5-lts.1"/' package.json
+    success "✅ Fixed multer version"
 fi
 
 # Add @types/multer to devDependencies
