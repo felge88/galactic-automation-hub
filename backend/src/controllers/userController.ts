@@ -2,8 +2,40 @@ import { Request, Response } from 'express';
 import { PrismaClient, Role, Rank } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
+import { AuthRequest } from '../middlewares/authMiddleware';
 
 const prisma = new PrismaClient();
+
+export const getCurrentUser = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({ error: 'Nicht authentifiziert' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { 
+        id: true, 
+        email: true, 
+        name: true, 
+        role: true, 
+        rank: true, 
+        image: true,
+        createdAt: true, 
+        updatedAt: true 
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+    }
+
+    res.json(user);
+  } catch {
+    res.status(500).json({ error: 'Serverfehler' });
+  }
+};
 
 export const getUsers = async (_req: Request, res: Response) => {
   try {

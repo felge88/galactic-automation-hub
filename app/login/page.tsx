@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast"
 import { login } from "@/lib/auth"
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -20,7 +20,7 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const result = await login(username, password)
+      const result = await login(email, password)
       if (result.success) {
         toast({
           title: "Zugang gewährt",
@@ -30,7 +30,7 @@ export default function LoginPage() {
       } else {
         toast({
           title: "Zugang verweigert",
-          description: "Ungültige Anmeldedaten. Versuchen Sie es erneut.",
+          description: result.error || "Ungültige Anmeldedaten. Versuchen Sie es erneut.",
           variant: "destructive",
         })
       }
@@ -77,12 +77,12 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <Input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className="starwars-input"
-                  placeholder="Offizier-Kennung"
+                  placeholder="E-Mail Adresse"
                 />
               </div>
 
@@ -108,6 +108,13 @@ export default function LoginPage() {
                 )}
               </Button>
             </form>
+
+            {/* Demo Credentials */}
+            <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded">
+              <p className="text-xs text-blue-300 mb-2">Demo-Zugangsdaten:</p>
+              <p className="text-xs text-white">Admin: admin@example.com / admin123</p>
+              <p className="text-xs text-white">User: user@example.com / user123</p>
+            </div>
 
             {/* Status Panel */}
             <div className="status-panel">

@@ -1,5 +1,35 @@
-node_modules
-# Keep environment variables out of version control
-.env
+# Dependencies
+node_modules/
+package-lock.json
 
-/generated/prisma
+# Environment variables
+.env*
+
+# Build output
+dist/
+build/
+
+# Database
+*.db
+*.db-journal
+dev.db*
+
+# Logs
+logs/
+*.log
+
+# Uploads
+uploads/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma
+prisma/dev.db*
