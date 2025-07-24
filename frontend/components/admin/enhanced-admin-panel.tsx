@@ -300,7 +300,7 @@ export function EnhancedAdminPanel() {
                               <div className="flex items-center justify-between">
                                 <span>Instagram Module</span>
                                 <Switch
-                                  checked={editingUser.permissions.instagram}
+                                  checked={editingUser.permissions?.instagram ?? false}
                                   onCheckedChange={(checked) =>
                                     setEditingUser({
                                       ...editingUser,
@@ -312,7 +312,7 @@ export function EnhancedAdminPanel() {
                               <div className="flex items-center justify-between">
                                 <span>YouTube Module</span>
                                 <Switch
-                                  checked={editingUser.permissions.youtube}
+                                  checked={editingUser.permissions?.youtube ?? false}
                                   onCheckedChange={(checked) =>
                                     setEditingUser({
                                       ...editingUser,
@@ -324,7 +324,7 @@ export function EnhancedAdminPanel() {
                               <div className="flex items-center justify-between">
                                 <span>Statistiken</span>
                                 <Switch
-                                  checked={editingUser.permissions.statistics}
+                                  checked={editingUser.permissions?.statistics ?? false}
                                   onCheckedChange={(checked) =>
                                     setEditingUser({
                                       ...editingUser,

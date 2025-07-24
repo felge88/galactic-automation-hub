@@ -15,17 +15,8 @@ export const getCurrentUser = async (req: AuthRequest, res: Response) => {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { 
-        id: true, 
-        username: true,
-        email: true, 
-        name: true, 
-        language: true,
-        role: true, 
-        rank: true, 
-        image: true,
-        createdAt: true, 
-        updatedAt: true 
+      include: {
+        modules: true
       }
     });
 
@@ -33,7 +24,32 @@ export const getCurrentUser = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Benutzer nicht gefunden' });
     }
 
-    res.json(user);
+    // Calculate permissions based on modules and role
+    const permissions = {
+      instagram: user.modules.some(m => m.name === 'instagram' && m.enabled) || 
+                 user.role === 'ADMIN' || user.role === 'ADMIRAL',
+      youtube: user.modules.some(m => m.name === 'youtube' && m.enabled) || 
+               user.role === 'ADMIN' || user.role === 'ADMIRAL',
+      statistics: user.modules.some(m => m.name === 'statistics' && m.enabled) || 
+                  user.role === 'ADMIN' || user.role === 'ADMIRAL' || true
+    };
+
+    const userResponse = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      name: user.name,
+      language: user.language,
+      role: user.role,
+      rank: user.rank,
+      image: user.image,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      isAdmin: user.role === 'ADMIN' || user.role === 'ADMIRAL',
+      permissions
+    };
+
+    res.json(userResponse);
   } catch {
     res.status(500).json({ error: 'Serverfehler' });
   }

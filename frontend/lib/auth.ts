@@ -10,6 +10,12 @@ export interface User {
   image?: string;
   createdAt: Date;
   updatedAt: Date;
+  isAdmin?: boolean;
+  permissions?: {
+    instagram: boolean;
+    youtube: boolean;
+    statistics: boolean;
+  };
 }
 
 interface LoginResponse {

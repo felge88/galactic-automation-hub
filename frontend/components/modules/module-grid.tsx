@@ -21,7 +21,7 @@ export function ModuleGrid({ user }: ModuleGridProps) {
       title: "Instagram Automation",
       description: "Posts planen, Accounts verwalten u.v.m.",
       href: "/modules/instagram",
-      active: user.permissions.instagram,
+      active: user.permissions?.instagram ?? false,
       icon: Instagram,
     },
     {
