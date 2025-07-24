@@ -143,16 +143,14 @@ log "📦 Node.js Dependencies reparieren..."
 
 # Fix Frontend dependencies
 log "🔧 Frontend Dependencies installieren..."
-if [ -f "package.json" ]; then
-    # Remove existing node_modules and lock file
-    rm -rf node_modules package-lock.json
-    
-    # Install with legacy peer deps to avoid conflicts
+if [ -f "frontend/package.json" ]; then
+    cd frontend
+    rm -rf node_modules package-lock.json pnpm-lock.yaml
     npm install --legacy-peer-deps || warn "Frontend npm install hatte Warnungen"
-    
+    cd "$PROJECT_DIR"
     log "✅ Frontend Dependencies installiert"
 else
-    warn "Frontend package.json nicht gefunden"
+    warn "frontend/package.json nicht gefunden"
 fi
 
 # Fix Backend dependencies
@@ -192,9 +190,7 @@ else
     warn ".env Datei nicht gefunden, wird übersprungen"
 fi
 
-# Make scripts executable
-chmod +x start-dev.sh 2>/dev/null || true
-chmod +x nginx-setup.sh 2>/dev/null || true
+# (Keine weiteren Skripte mehr ausführbar machen nötig)
 
 log "✅ Sicherheitskonfiguration abgeschlossen"
 
