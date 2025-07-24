@@ -16,5 +16,4 @@ export interface ExtendedUser {
       statistics: boolean;
     };
   }
-
-  DU ARSCH!
+  
