@@ -17,7 +17,7 @@ export function EnhancedModuleGrid({ user }: EnhancedModuleGridProps) {
       title: "Instagram Automation",
       description: "Automatisiere Posts, Stories und Interaktionen",
       href: "/modules/instagram",
-      active: user.permissions.instagram,
+      active: user.permissions?.instagram ?? false,
       coverImage: "/futuristic-instagram-automation.png",
       titleImage: "/instagram-title-logo.png",
       characterImage: "/social-media-robot.png",
