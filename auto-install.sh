@@ -2,14 +2,14 @@
 set -e
 
 # =============================================================================
-# 🚀 Galactic Automation Hub - Auto Installation Script
+# 🚀 Galactic Automation Hub - Auto Installation Script (/var/www optimiert)
 # =============================================================================
 # Dieses Script installiert alles Notwendige und startet die Anwendung
 # 
 # Usage: 
-#   1. Script nach /var/www kopieren
-#   2. chmod +x auto-install.sh
-#   3. sudo ./auto-install.sh
+#   curl -sSL https://raw.githubusercontent.com/felge88/galactic-automation-hub/main/auto-install.sh -o auto-install.sh
+#   chmod +x auto-install.sh
+#   sudo bash auto-install.sh
 # =============================================================================
 
 echo "🌌 Galactic Automation Hub - Auto Installation"
@@ -148,14 +148,35 @@ log "🔒 Sicherheitskonfiguration..."
 # Generate secure JWT secret
 JWT_SECRET=$(openssl rand -base64 64)
 
-# Update .env file
-log "🔑 JWT Secret generieren und konfigurieren..."
-if [ -f "backend/.env" ]; then
-    sed -i "s/JWT_SECRET=.*/JWT_SECRET=\"$JWT_SECRET\"/" backend/.env
-    log "✅ JWT Secret aktualisiert"
-else
-    warn ".env Datei nicht gefunden, wird übersprungen"
-fi
+# Create/Update .env file
+log "🔑 JWT Secret generieren und .env erstellen..."
+cat > backend/.env << EOF
+# Database Configuration
+DATABASE_URL=postgresql://appuser:apppassword@database:5432/appdb
+
+# JWT Configuration
+JWT_SECRET=$JWT_SECRET
+
+# Server Configuration
+PORT=4000
+NODE_ENV=production
+
+# CORS Configuration
+CORS_ORIGIN=http://localhost:3000
+
+# Upload Configuration
+UPLOAD_MAX_SIZE=10485760
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+EOF
+
+# Set secure permissions for .env
+chmod 600 backend/.env
+chown $CURRENT_USER:$CURRENT_USER backend/.env
+
+log "✅ Backend .env Datei erstellt und konfiguriert"
 
 # (Keine weiteren Skripte mehr ausführbar machen nötig)
 
@@ -171,7 +192,9 @@ docker compose down 2>/dev/null || true
 
 # Build and start application
 log "🔨 Container werden gebaut und gestartet..."
-COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose up --build -d
+# Clean build without cache to avoid conflicts
+docker compose build --no-cache
+docker compose up -d
 
 # Wait for services to be ready
 log "⏳ Warte auf Service-Start..."
