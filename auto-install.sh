@@ -138,40 +138,7 @@ log "✅ Projekt erfolgreich geklont"
 
 # =============================================================================
 # 5. NODE.JS DEPENDENCIES FIX
-# =============================================================================
-log "📦 Node.js Dependencies reparieren..."
-
-# Fix Frontend dependencies
-log "🔧 Frontend Dependencies installieren..."
-if [ -f "frontend/package.json" ]; then
-    cd frontend
-    rm -rf node_modules package-lock.json pnpm-lock.yaml
-    npm install --legacy-peer-deps || warn "Frontend npm install hatte Warnungen"
-    cd "$PROJECT_DIR"
-    log "✅ Frontend Dependencies installiert"
-else
-    warn "frontend/package.json nicht gefunden"
-fi
-
-# Fix Backend dependencies
-log "🔧 Backend Dependencies installieren..."
-cd backend
-if [ -f "package.json" ]; then
-    # Remove existing node_modules and lock file
-    rm -rf node_modules package-lock.json
-    
-    # Install backend dependencies
-    npm install || warn "Backend npm install hatte Warnungen"
-    
-    log "✅ Backend Dependencies installiert"
-else
-    warn "Backend package.json nicht gefunden"
-fi
-
-# Go back to project root
-cd "$PROJECT_DIR"
-
-log "✅ Node.js Dependencies repariert"
+# (Entfernt, da alles über Docker läuft)
 
 # =============================================================================
 # 6. SECURITY CONFIGURATION
