@@ -20,6 +20,7 @@ model User {
   password  String
   name      String
   image     String?
+  language  String?  @default("en")
   role      Role     @default(USER)
   rank      Rank     @default(NONE)
   modules   Module[]

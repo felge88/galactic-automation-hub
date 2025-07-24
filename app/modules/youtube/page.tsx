@@ -10,7 +10,7 @@ export default async function YouTubePage() {
   }
 
   // Check if user has YouTube module permission
-  if (!user.permissions.youtube) {
+  if (!user.permissions?.youtube && user.role !== 'ADMIN') {
     redirect("/modules")
   }
 

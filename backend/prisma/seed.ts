@@ -16,6 +16,7 @@ async function main() {
       email: 'admin@example.com',
       password: adminPassword,
       name: 'Admiral Skywalker',
+      language: 'de',
       role: 'ADMIN',
       rank: 'ELITE'
     }
@@ -31,6 +32,7 @@ async function main() {
       email: 'user@example.com',
       password: userPassword,
       name: 'Luke Skywalker',
+      language: 'en',
       role: 'USER',
       rank: 'VIP'
     }
@@ -46,6 +48,7 @@ async function main() {
       email: 'commander@example.com',
       password: commanderPassword,
       name: 'Commander Vader',
+      language: 'de',
       role: 'ADMIRAL',
       rank: 'ELITE'
     }

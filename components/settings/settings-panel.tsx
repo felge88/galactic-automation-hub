@@ -64,8 +64,8 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-300">YouTube Module</span>
-              <Badge className={user.permissions.youtube ? "status-green" : "status-red"}>
-                {user.permissions.youtube ? "Aktiviert" : "Deaktiviert"}
+                              <Badge className={user.permissions?.youtube ? "status-green" : "status-red"}>
+                  {user.permissions?.youtube ? "Aktiviert" : "Deaktiviert"}
               </Badge>
             </div>
             <div className="flex items-center justify-between">

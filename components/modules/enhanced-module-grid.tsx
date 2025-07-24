@@ -29,7 +29,7 @@ export function EnhancedModuleGrid({ user }: EnhancedModuleGridProps) {
       title: "YouTube Downloader",
       description: "Lade Videos und Audio in allen Formaten herunter",
       href: "/modules/youtube",
-      active: user.permissions.youtube,
+      active: user.permissions?.youtube || false,
       coverImage: "/youtube-downloader-dark.png",
       titleImage: "/youtube-title-logo.png",
       characterImage: "/download-bot.png",

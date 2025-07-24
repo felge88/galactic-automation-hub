@@ -235,14 +235,14 @@ export function EnhancedAdminPanel() {
                   <div className="flex items-center space-x-2">
                     <div className="text-xs text-gray-400 text-right">
                       <div className="flex space-x-1">
-                        <span className={user.permissions.instagram ? "text-green-400" : "text-red-400"}>
-                          IG {user.permissions.instagram ? "✓" : "✗"}
+                        <span className={user.permissions?.instagram ? "text-green-400" : "text-red-400"}>
+                          IG {user.permissions?.instagram ? "✓" : "✗"}
                         </span>
-                        <span className={user.permissions.youtube ? "text-green-400" : "text-red-400"}>
-                          YT {user.permissions.youtube ? "✓" : "✗"}
+                        <span className={user.permissions?.youtube ? "text-green-400" : "text-red-400"}>
+                          YT {user.permissions?.youtube ? "✓" : "✗"}
                         </span>
-                        <span className={user.permissions.statistics ? "text-green-400" : "text-red-400"}>
-                          Stats {user.permissions.statistics ? "✓" : "✗"}
+                        <span className={user.permissions?.statistics ? "text-green-400" : "text-red-400"}>
+                          Stats {user.permissions?.statistics ? "✓" : "✗"}
                         </span>
                       </div>
                     </div>
